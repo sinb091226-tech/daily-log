@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 일상 블로그</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>나의 일상 블로그 🌿</h1>
+  </header>
+
+  <main>
+    <section id="new-post">
+      <h2>새 글 작성하기</h2>
+      <input type="text" id="title" placeholder="제목을 입력하세요">
+      <textarea id="content" placeholder="내용을 입력하세요"></textarea>
+      <button id="save">글 저장</button>
+    </section>
+
+    <section id="posts">
+      <h2>글 목록</h2>
+      <ul id="post-list"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 My Daily Blog</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+<html>
+  
+body {
+  font-family: "Pretendard", sans-serif;
+  background: #fafafa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #89c9b8;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+main {
+  width: 90%;
+  max-width: 700px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  border-bottom: 2px solid #89c9b8;
+  padding-bottom: 5px;
+}
+
+#new-post input, #new-post textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button {
+  background: #89c9b8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #6eb4a2;
+}
+
+#post-list {
+  list-style: none;
+  padding: 0;
+}
+
+#post-list li {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+#post-list li h3 {
+  margin: 0;
+}
+
+#post-list li small {
+  display: block;
+  color: #777;
+  margin: 5px 0;
+}
+
+#post-list li button {
+  background: #ff7070;
+  margin-top: 5px;
+}
+
+#post-list li button:hover {
+  background: #e05656;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #f0f0f0;
+
+  // 글 목록 불러오기
+function loadPosts() {
+  const posts = JSON.parse(localStorage.getItem("posts")) || [];
+  const postList = document.getElementById("post-list");
+  postList.innerHTML = "";
+
+  posts.forEach((post, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <h3>${post.title}</h3>
+      <p>${post.content}</p>
+      <small>${post.date}</small>
+      <button onclick="deletePost(${index})">삭제</button>
+    `;
+    postList.appendChild(li);
+  });
+}
+
+// 글 저장
+document.getElementById("save").addEventListener("click", () => {
+  const title = document.getElementById("title").value.trim();
+  const content = document.getElementById("content").value.trim();
+
+  if (!title || !content) {
+    alert("제목과 내용을 입력해주세요!");
+    return;
+  }
+
+  const newPost = {
+    title,
+    content,
+    date: new Date().toLocaleString(),
+  };
+
+  const posts = JSON.parse(localStorage.getItem("posts")) || [];
+  posts.unshift(newPost); // 최신글 위로
+  localStorage.setItem("posts", JSON.stringify(posts));
+
+  document.getElementById("title").value = "";
+  document.getElementById("content").value = "";
+
+  loadPosts();
+});
+
+// 글 삭제
+function deletePost(index) {
+  const posts = JSON.parse(localStorage.getItem("posts")) || [];
+  posts.splice(index, 1);
+  localStorage.setItem("posts", JSON.stringify(posts));
